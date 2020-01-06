@@ -1,0 +1,3 @@
+const unsigned short dot[] = {
+ 0x95DF,
+};
