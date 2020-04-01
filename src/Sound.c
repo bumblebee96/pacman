@@ -90,7 +90,7 @@ const unsigned char chomp[7900] = {8,8,8,7,7,8,8,8,8,8,8,7,7,7,7,7,7,7,7,7,7,7,7
 
 int i;
 int size;
-const uint8_t * sound;
+const uint8_t* sound;
 	
 void Sound_Init(void)
 {
@@ -99,30 +99,30 @@ void Sound_Init(void)
 	i = 0;
 	size = 1;
 	sound = 0;
-};
+}
 
 void Sound_Play(const uint8_t *pt, uint32_t count)
 {
 	size = count;
 	sound = pt;
-};
+}
 
 void Sound_Intro(void)
 {
 	i = 0;
 	Sound_Play(Opening_song,48384);
-};
+}
 
 void Sound_Die(void)
 {
 	i = 0;
 	Sound_Play(die,19008);
-};
+}
 
 void Sound_Siren(void)
 {
 	Sound_Play(siren_sound,17640);
-};
+}
 
 void Sound_Chomp()
 {

@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 //initialize pin c4 that will be a switch that will  simulate  a coin going into the machine
 void CoinInit(void);
 //check if the player has paid (clicked  the  switch)
