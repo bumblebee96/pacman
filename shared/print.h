@@ -4,6 +4,7 @@
 // pixel LCD to display text, images, or other information.
 // Daniel Valvano
 // October 20, 2014
+#include <stdint.h>
 
 
 //-----------------------LCD_OutDec-----------------------
