@@ -3,7 +3,7 @@
 // Jonathan Valvano and Daniel Valvano
 // This is a starter project for the EE319K Lab 10
 
-// Last Modified: 3/6/2015 
+// Last Modified: 3/6/2015
 // http://www.spaceinvaders.de/
 // sounds at http://www.classicgaming.cc/classics/spaceinvaders/sounds.php
 // http://www.classicgaming.cc/classics/spaceinvaders/playguide.php
@@ -28,7 +28,7 @@
 // ******* Possible Hardware I/O connections*******************
 // Slide pot pin 1 connected to ground
 // Slide pot pin 2 connected to PE2/AIN1
-// Slide pot pin 3 connected to +3.3V 
+// Slide pot pin 3 connected to +3.3V
 // fire button connected to PE0
 // special weapon fire button connected to PE1
 // 8*R resistor DAC bit 0 on PB0 (least significant bit)
@@ -56,8 +56,8 @@
 #include "inc/tm4c123gh6pm.h"
 #include "shared/ST7735.h"
 #include "shared/random.h"
+#include "shared/PLL.h"
 
-#include "TExaS.h"
 #include "ADC.h"
 #include "Sound.h"
 #include "Maze.h"
@@ -2624,44 +2624,44 @@ const unsigned short gameover[] = {
 
 typedef struct Pac_Man
 {
-	int startx;
-	int starty;
-	int x;
-	int y;
-	int direction;
-	const unsigned short * bmp;
+  int startx;
+  int starty;
+  int x;
+  int y;
+  int direction;
+  const unsigned short * bmp;
 }Pac_Man;
 
 typedef struct Pac_Dot
 {
-	int x;
-	int y;
-	int visible;//bool
+  int x;
+  int y;
+  int visible;//bool
 }Pac_Dot;
 
 typedef struct Power_Pellet
 {
-	int x;
-	int y;
-	int visible;//bool
+  int x;
+  int y;
+  int visible;//bool
 }Power_Pellet;
 
 typedef struct Ghost
 {
-	int startx;
-	int starty;
-	int x;
-	int y;
-	int direction;
-	int nextDirection;
-	int scared;//bool
-	int scatter;//bool
-	int chase;//bool
-	int alive;//bool
-	int targetx;
-	int targety;
-	const unsigned short * bmp;
-	char traped;//bool
+  int startx;
+  int starty;
+  int x;
+  int y;
+  int direction;
+  int nextDirection;
+  int scared;//bool
+  int scatter;//bool
+  int chase;//bool
+  int alive;//bool
+  int targetx;
+  int targety;
+  const unsigned short * bmp;
+  char traped;//bool
 }Ghost;
 
 Pac_Man puck;
@@ -2713,64 +2713,64 @@ int CollidesPowerDot(Power_Pellet[]);
 
 int main(void)
 {
-  TExaS_Init();  // set system clock to 80 MHz
-	
-	//mystuff
-	InitGame();
-	CoinInit();
-	Sound_Init();
-	
+  PLL_Init(Bus80MHz);           // set system clock to 80 MHz
+
+  //mystuff
+  InitGame();
+  CoinInit();
+  Sound_Init();
+
   Output_Init();
-	systickinit();
-	ADC_Init();
-	Timer0_Init(periodic60hz,8000000);
-	Timer1_Init(unscare,650000000);
-	Timer2_Init(GameFlow,138758400);
-	Timer3_Init(Play,7300);
-	
-	EnableInterrupts();
-	
+  systickinit();
+  ADC_Init();
+  Timer0_Init(periodic60hz,8000000);
+  Timer1_Init(unscare,650000000);
+  Timer2_Init(GameFlow,138758400);
+  Timer3_Init(Play,7300);
+
+  EnableInterrupts();
+
   while(1)
-	{
-		//start screen
-		PayToPlay();
-		Random_Init(NVIC_ST_CURRENT_R);
-		
-		//set up the game screen
-		ST7735_FillScreen(0x0000);
-		ST7735_DrawBitmap(8,144,Map,112,144);
-		ST7735_DrawBitmap(50,85,ready,28,8);
-		
-		for(int i = 0; i < 240; i++)
-			ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
-		for(int i = 0; i < 4; i++)
-		{
-			ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
-		}
-		
-		for(int i = 0; i < lives - 1; i++)
-		{
-			ST7735_DrawBitmap(i*8 + 8,152, yellow,8,8);
-		}
-		
-		ST7735_DrawBitmap(enemies[0].x*4 + 6,enemies[0].y*4 + 6,enemies[0].bmp,8,8);
-		ST7735_DrawBitmap(enemies[1].x*4 + 8,enemies[1].y*4 + 6,enemies[1].bmp,8,8);
-		ST7735_DrawBitmap(enemies[2].x*4 + 8,enemies[2].y*4 + 6,enemies[2].bmp,8,8);
-		ST7735_DrawBitmap(enemies[3].x*4 + 8,enemies[3].y*4 + 6,enemies[3].bmp,8,8);
-		
-		ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,puck.bmp,8,8);
-		
-		ST7735_SetCursor(15,0);
-		//LCD_OutDec(score);
-		
-		//output lives
-		
-		//gameloop
-		GameInProgress = TRUE;
-		gameLoop();
-		
-		//gameover
-		GameOver();
+  {
+    //start screen
+    PayToPlay();
+    Random_Init(NVIC_ST_CURRENT_R);
+
+    //set up the game screen
+    ST7735_FillScreen(0x0000);
+    ST7735_DrawBitmap(8,144,Map,112,144);
+    ST7735_DrawBitmap(50,85,ready,28,8);
+
+    for(int i = 0; i < 240; i++)
+      ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
+    for(int i = 0; i < 4; i++)
+    {
+      ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
+    }
+
+    for(int i = 0; i < lives - 1; i++)
+    {
+      ST7735_DrawBitmap(i*8 + 8,152, yellow,8,8);
+    }
+
+    ST7735_DrawBitmap(enemies[0].x*4 + 6,enemies[0].y*4 + 6,enemies[0].bmp,8,8);
+    ST7735_DrawBitmap(enemies[1].x*4 + 8,enemies[1].y*4 + 6,enemies[1].bmp,8,8);
+    ST7735_DrawBitmap(enemies[2].x*4 + 8,enemies[2].y*4 + 6,enemies[2].bmp,8,8);
+    ST7735_DrawBitmap(enemies[3].x*4 + 8,enemies[3].y*4 + 6,enemies[3].bmp,8,8);
+
+    ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,puck.bmp,8,8);
+
+    ST7735_SetCursor(15,0);
+    //LCD_OutDec(score);
+
+    //output lives
+
+    //gameloop
+    GameInProgress = TRUE;
+    gameLoop();
+
+    //gameover
+    GameOver();
   }
 
 }
@@ -2780,1242 +2780,1242 @@ int main(void)
 
 void Delay100ms(uint32_t count)
 {
-	uint32_t volatile time;
-	
+  uint32_t volatile time;
+
   while(count > 0)
-	{
+  {
     time = 727240;  // 0.1sec at 80 MHz
-		
+
     while(time)
-		{
-	  	time--;
+    {
+      time--;
     }
-		
+
     count--;
   }
 }
 
 void InitGame()
 {
-	LevelInProgress = FALSE;//0 or 1 (0 is false 1 is true)
-	GameInProgress = FALSE;
-	directionBuffer = CENTER;
-	direction = CENTER;
-	lives = 3;
-	score = 0;
-	dotsEaten = 0;
-	level = 0;
-	Input = TRUE;
-	toggle = 0;
-	
-	for(int i = 0; i < 240; i++)
-	{
-		pellets[i] = (Pac_Dot) {0,0,TRUE};
-	}
-	setPellets();
-	
-	puck = (Pac_Man) {13,26,13,26,LEFT,startyellow};
-	
-	energizers[0] = (Power_Pellet) {1,6,TRUE};
-	energizers[1] = (Power_Pellet) {26,6,TRUE};
-	energizers[2] = (Power_Pellet) {1,26,TRUE};
-	energizers[3] = (Power_Pellet) {26,26,TRUE};
-	
-	enemies[0] = (Ghost) {13,14,13,14,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,25,0,red,FALSE};//red
-	enemies[1] = (Ghost) {11,17,11,17,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,27,34,blueup,TRUE};//blue
-	enemies[2] = (Ghost) {13,17,13,17,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,2,0,pinkdown,TRUE};//pinky
-	enemies[3] = (Ghost) {15,17,15,17,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,0,34,orangeup,TRUE};//clyde
+  LevelInProgress = FALSE;//0 or 1 (0 is false 1 is true)
+  GameInProgress = FALSE;
+  directionBuffer = CENTER;
+  direction = CENTER;
+  lives = 3;
+  score = 0;
+  dotsEaten = 0;
+  level = 0;
+  Input = TRUE;
+  toggle = 0;
+
+  for(int i = 0; i < 240; i++)
+  {
+    pellets[i] = (Pac_Dot) {0,0,TRUE};
+  }
+  setPellets();
+
+  puck = (Pac_Man) {13,26,13,26,LEFT,startyellow};
+
+  energizers[0] = (Power_Pellet) {1,6,TRUE};
+  energizers[1] = (Power_Pellet) {26,6,TRUE};
+  energizers[2] = (Power_Pellet) {1,26,TRUE};
+  energizers[3] = (Power_Pellet) {26,26,TRUE};
+
+  enemies[0] = (Ghost) {13,14,13,14,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,25,0,red,FALSE};//red
+  enemies[1] = (Ghost) {11,17,11,17,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,27,34,blueup,TRUE};//blue
+  enemies[2] = (Ghost) {13,17,13,17,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,2,0,pinkdown,TRUE};//pinky
+  enemies[3] = (Ghost) {15,17,15,17,LEFT,LEFT,FALSE,TRUE,FALSE,TRUE,0,34,orangeup,TRUE};//clyde
 }
 
 void setPellets()
 {
-	int count = 0;
-	
-	for (int i = 0; i < Height(); i++)
-	{
-		for (int j = 0; j < Width(); j++)
-		{
-			if (Maze_Get(j,i) == 'p')
-				{
-					pellets[count].x = j;
-					pellets[count++].y = i;
-				}
-		}
-	}
+  int count = 0;
+
+  for (int i = 0; i < Height(); i++)
+  {
+    for (int j = 0; j < Width(); j++)
+    {
+      if (Maze_Get(j,i) == 'p')
+        {
+          pellets[count].x = j;
+          pellets[count++].y = i;
+        }
+    }
+  }
 }
 
 void PayToPlay()
 {
-	Sound_Intro();
-	
-	//output start screen
-	ST7735_FillScreen(0x0000);
-	ST7735_DrawBitmap(2,160,startscreen,124,160);
-	
-	//ask for a coin
+  Sound_Intro();
+
+  //output start screen
+  ST7735_FillScreen(0x0000);
+  ST7735_DrawBitmap(2,160,startscreen,124,160);
+
+  //ask for a coin
   ST7735_SetCursor(9, 15);
   ST7735_OutString("Insert Coin");
-	
-	//wait for coin
-	while(Paid() == 0);
+
+  //wait for coin
+  while(Paid() == 0);
 }
 
 void GameOver()
 {
-	//output game over
-	ST7735_DrawBitmap(42,85,gameover,43,8);
-	
-	//wait 5 sec 
-	Delay100ms(30);
-	
-	//reset game
-	InitGame();
-	
-	//cancel any interrupts that i may have initilized for the previous game
+  //output game over
+  ST7735_DrawBitmap(42,85,gameover,43,8);
+
+  //wait 5 sec
+  Delay100ms(30);
+
+  //reset game
+  InitGame();
+
+  //cancel any interrupts that i may have initilized for the previous game
 }
 
 /*----------------------------------------------GAME FUNCTIONS START HERE--------------------------------------------------------------*/
 
 void gameLoop()
 {
-	while(GameInProgress == TRUE)
-	{
-		for(int i = 0; i < 4; i++)
-		{
-			enemies[i].scatter = TRUE;
-			enemies[i].chase = FALSE;
-		}
-		
-		Delay100ms(10);
-		
-		for(int i = 0; i < 4; i++)
-		{
-			enemies[i].scatter = FALSE;
-			enemies[i].chase = TRUE;
-		}
-		
-		Delay100ms(40);
-		
-	}
+  while(GameInProgress == TRUE)
+  {
+    for(int i = 0; i < 4; i++)
+    {
+      enemies[i].scatter = TRUE;
+      enemies[i].chase = FALSE;
+    }
+
+    Delay100ms(10);
+
+    for(int i = 0; i < 4; i++)
+    {
+      enemies[i].scatter = FALSE;
+      enemies[i].chase = TRUE;
+    }
+
+    Delay100ms(40);
+
+  }
 }
 
 void reDraw()
 {
-	for(int i = 0; i < 240; i++)
-	{
-		if(pellets[i].visible == TRUE)
-			ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
-	}
-	
-	for(int i = 0; i < 4; i++)
-	{
-		if(energizers[i].visible == TRUE)
-			ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
-	}
-	
-	ST7735_DrawBitmap(enemies[0].x*4 + 6,enemies[0].y*4 + 6,enemies[0].bmp,8,8);
-	ST7735_DrawBitmap(enemies[1].x*4 + 6,enemies[1].y*4 + 6,enemies[1].bmp,8,8);
-	ST7735_DrawBitmap(enemies[2].x*4 + 6,enemies[2].y*4 + 6,enemies[2].bmp,8,8);
-	ST7735_DrawBitmap(enemies[3].x*4 + 6,enemies[3].y*4 + 6,enemies[3].bmp,8,8);
-	
-	ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,puck.bmp,8,8);
-	
-	//redraw highscore
-	ST7735_SetCursor(15,0);
-	//LCD_OutDec(score);
+  for(int i = 0; i < 240; i++)
+  {
+    if(pellets[i].visible == TRUE)
+      ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    if(energizers[i].visible == TRUE)
+      ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
+  }
+
+  ST7735_DrawBitmap(enemies[0].x*4 + 6,enemies[0].y*4 + 6,enemies[0].bmp,8,8);
+  ST7735_DrawBitmap(enemies[1].x*4 + 6,enemies[1].y*4 + 6,enemies[1].bmp,8,8);
+  ST7735_DrawBitmap(enemies[2].x*4 + 6,enemies[2].y*4 + 6,enemies[2].bmp,8,8);
+  ST7735_DrawBitmap(enemies[3].x*4 + 6,enemies[3].y*4 + 6,enemies[3].bmp,8,8);
+
+  ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,puck.bmp,8,8);
+
+  //redraw highscore
+  ST7735_SetCursor(15,0);
+  //LCD_OutDec(score);
 }
 
 void midGameReset()
 {
-	direction = CENTER;
-	directionBuffer = CENTER;
-	
-	puck.x = puck.startx;
-	puck.y = puck.starty;
-	puck.direction = LEFT;
-	puck.bmp = startyellow;
-	
-	for(int i = 0; i < 4; i++)
-	{
-		enemies[i].x = enemies[i].startx;
-		enemies[i].y = enemies[i].starty;
-		enemies[i].direction = LEFT;
-		enemies[i].nextDirection = LEFT;
-		enemies[i].scared = FALSE;
-		enemies[i].scatter = TRUE;
-		enemies[i].chase = FALSE;
-		enemies[i].alive = TRUE;
-	}
-	
-	enemies[0].bmp = red;
-	enemies[1].bmp = blueup;
-	enemies[2].bmp = pinkdown;
-	enemies[3].bmp = orangeup;
-	
-	enemies[0].traped = FALSE;
-	enemies[1].traped = TRUE;
-	enemies[2].traped = TRUE;
-	enemies[3].traped = TRUE;
-	
-	ST7735_DrawBitmap(50,85,ready,28,8);
-	
-	for(int i = 0; i < 240; i++)
-	{
-		if(pellets[i].visible == TRUE)
-			ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
-	}
-	
-	for(int i = 0; i < 4; i++)
-	{
-		if(energizers[i].visible == TRUE)
-			ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
-	}
-	
-	for(int i = 0; i < lives; i++)
-	{
-		ST7735_DrawBitmap(i*8 + 8,152, refresh,8,8);
-	}
-	
-	for(int i = 0; i < lives - 1; i++)
-	{
-		ST7735_DrawBitmap(i*8 + 8,152, yellow,8,8);
-	}
-	
-	ST7735_DrawBitmap(enemies[0].x*4 + 6,enemies[0].y*4 + 6,enemies[0].bmp,8,8);
-	ST7735_DrawBitmap(enemies[1].x*4 + 8,enemies[1].y*4 + 6,enemies[1].bmp,8,8);
-	ST7735_DrawBitmap(enemies[2].x*4 + 8,enemies[2].y*4 + 6,enemies[2].bmp,8,8);
-	ST7735_DrawBitmap(enemies[3].x*4 + 8,enemies[3].y*4 + 6,enemies[3].bmp,8,8);
-	
-	ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,puck.bmp,8,8);
+  direction = CENTER;
+  directionBuffer = CENTER;
+
+  puck.x = puck.startx;
+  puck.y = puck.starty;
+  puck.direction = LEFT;
+  puck.bmp = startyellow;
+
+  for(int i = 0; i < 4; i++)
+  {
+    enemies[i].x = enemies[i].startx;
+    enemies[i].y = enemies[i].starty;
+    enemies[i].direction = LEFT;
+    enemies[i].nextDirection = LEFT;
+    enemies[i].scared = FALSE;
+    enemies[i].scatter = TRUE;
+    enemies[i].chase = FALSE;
+    enemies[i].alive = TRUE;
+  }
+
+  enemies[0].bmp = red;
+  enemies[1].bmp = blueup;
+  enemies[2].bmp = pinkdown;
+  enemies[3].bmp = orangeup;
+
+  enemies[0].traped = FALSE;
+  enemies[1].traped = TRUE;
+  enemies[2].traped = TRUE;
+  enemies[3].traped = TRUE;
+
+  ST7735_DrawBitmap(50,85,ready,28,8);
+
+  for(int i = 0; i < 240; i++)
+  {
+    if(pellets[i].visible == TRUE)
+      ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    if(energizers[i].visible == TRUE)
+      ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
+  }
+
+  for(int i = 0; i < lives; i++)
+  {
+    ST7735_DrawBitmap(i*8 + 8,152, refresh,8,8);
+  }
+
+  for(int i = 0; i < lives - 1; i++)
+  {
+    ST7735_DrawBitmap(i*8 + 8,152, yellow,8,8);
+  }
+
+  ST7735_DrawBitmap(enemies[0].x*4 + 6,enemies[0].y*4 + 6,enemies[0].bmp,8,8);
+  ST7735_DrawBitmap(enemies[1].x*4 + 8,enemies[1].y*4 + 6,enemies[1].bmp,8,8);
+  ST7735_DrawBitmap(enemies[2].x*4 + 8,enemies[2].y*4 + 6,enemies[2].bmp,8,8);
+  ST7735_DrawBitmap(enemies[3].x*4 + 8,enemies[3].y*4 + 6,enemies[3].bmp,8,8);
+
+  ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,puck.bmp,8,8);
 }
 
 void LoseLife()
 {
-	Sound_Die();
-	
-	LevelInProgress = FALSE;
-	Input = FALSE;
-	lives--;
-	
-	ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-	
-	for(int i = 0; i < 4; i++)
-	{
-		ST7735_DrawBitmap(enemies[i].x*4 + 6,enemies[i].y*4 + 6,refresh,8,8);
-	}
-	
-	for(int i = 0; i < 240; i++)
-	{
-		if(pellets[i].visible == TRUE)
-			ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
-	}
-	
-	for(int i = 0; i < 4; i++)
-	{
-		if(energizers[i].visible == TRUE)
-			ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
-	}
-	
-	if(lives <= 0)
-	{
-		GameInProgress = FALSE;
-		TIMER2_CTL_R = 0x00000001;
-	}
-	else
-		TIMER2_CTL_R = 0x00000001;//goes to gameflow()
+  Sound_Die();
+
+  LevelInProgress = FALSE;
+  Input = FALSE;
+  lives--;
+
+  ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+
+  for(int i = 0; i < 4; i++)
+  {
+    ST7735_DrawBitmap(enemies[i].x*4 + 6,enemies[i].y*4 + 6,refresh,8,8);
+  }
+
+  for(int i = 0; i < 240; i++)
+  {
+    if(pellets[i].visible == TRUE)
+      ST7735_DrawBitmap(pellets[i].x*4 + 9,pellets[i].y*4 + 2,dot,1,1);
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    if(energizers[i].visible == TRUE)
+      ST7735_DrawBitmap(energizers[i].x*4 + 8,energizers[i].y*4 + 4,powerdot,4,4);
+  }
+
+  if(lives <= 0)
+  {
+    GameInProgress = FALSE;
+    TIMER2_CTL_R = 0x00000001;
+  }
+  else
+    TIMER2_CTL_R = 0x00000001;//goes to gameflow()
 }
 
 void LevelUp()
 {
-	for(int i = 0; i < 240; i++)
-	{
-		pellets[i].visible = TRUE;
-	}
-	
-	for(int i = 0; i < 4; i++)
-	{
-		energizers[i].visible = TRUE;
-	}
-	
-	dotsEaten = 0;
-	level++;
-	
-	midGameReset();
+  for(int i = 0; i < 240; i++)
+  {
+    pellets[i].visible = TRUE;
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    energizers[i].visible = TRUE;
+  }
+
+  dotsEaten = 0;
+  level++;
+
+  midGameReset();
 }
 
 void movePuck()
 {
-	//move pacman
-	
-	Sound_Siren();
-	
-	
-	//checks for collisions twice that way he never moves straight through  a ghost
-	int index = CollidesGhost(enemies);
-	
-	if ((index != -1) && (enemies[index].alive == TRUE) && (enemies[index].scared == FALSE))
-	{
-		LoseLife();
-	}
-	
-	else if (index != -1 && enemies[index].alive && enemies[index].scared)
-	{
-		score = score + 200;
-		enemies[index].alive = FALSE;
-		enemies[index].scared = FALSE;
-	}
-	
-	//if pacman is going out of bounds adjust his coordinates in the maze
-	//that way he scrolls to the other side of the screen
-	if(puck.x == 0 && puck.direction == LEFT)
-	{
-		puck.x = 28;
-	}
-	
-	if (puck.x == 27 && puck.direction == RIGHT)
-	{
-		puck.x = -1;
-	}
-	
-	//if the player is within the maze and he selects a new direction update pacmans direction
-	if (puck.x > -1 && puck.x < 28)
-	{
-		if (direction == LEFT && Maze_Get(puck.x - 1, puck.y) != '*' && Maze_Get(puck.x - 1, puck.y) != '-')
-		{
-			puck.direction = direction;
-			puck.bmp = yellow;
-		}
-		else if (direction == RIGHT && Maze_Get(puck.x + 1, puck.y) != '*' && Maze_Get(puck.x + 1, puck.y) != '-')
-		{
-			puck.direction = direction;
-			puck.bmp = yellowright;
-		}
-		else if (direction == UP && Maze_Get(puck.x, puck.y - 1) != '*' && Maze_Get(puck.x, puck.y - 1) != '-')
-		{
-			puck.direction = direction;
-			puck.bmp = yellowup;
-		}
-		else if (direction == DOWN && Maze_Get(puck.x, puck.y + 1) != '*' && Maze_Get(puck.x, puck.y + 1) != '-')
-		{
-			puck.direction = direction;
-			puck.bmp = yellowdown;
-		}
-	}
-	
-	//check which direction pacman is moving in and update his position in the maze
-	if (puck.direction == LEFT && Maze_Get(puck.x - 1, puck.y) != '*' && Maze_Get(puck.x - 1, puck.y) != '-')
-	{
-		if(puck.x == 28)
-			ST7735_DrawBitmap(6,puck.y*4 + 6,refresh,8,8);
-		else
-			ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-			
-		puck.x = puck.x - 1;
-	}
-	else if (puck.direction == RIGHT && Maze_Get(puck.x + 1, puck.y) != '*' && Maze_Get(puck.x + 1, puck.y) != '-')
-	{
-		if(puck.x == -1)
-			ST7735_DrawBitmap(114,puck.y*4 + 6,refresh,8,8);
-		else
-			ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-			
-		puck.x = puck.x + 1;
-	}
-	else if (puck.direction == UP && Maze_Get(puck.x, puck.y - 1) != '*' && Maze_Get(puck.x, puck.y - 1) != '-')
-	{
-		ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-		puck.y = puck.y - 1;
-	}
-	else if (puck.direction == DOWN && Maze_Get(puck.x, puck.y + 1) != '*' && Maze_Get(puck.x, puck.y + 1) != '-')
-	{
-		ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-		puck.y = puck.y + 1;
-	}
-	
-	//check for any collisions
-	index = CollidesDot(pellets);
-	
-	if(index != -1)
-	{
-		Sound_Chomp();
-		pellets[index].visible = FALSE;
-		score += 10;
-		dotsEaten++;
-		
-		if (score >= 10000)
-		{
-			lives++;
-		}
-		
-		if (dotsEaten == 244)
-		{
-			//you win use isr
-			LevelInProgress = FALSE;
-			Input = FALSE;
-			Stop();
-			
-			ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-			for(int i = 0; i < 4; i++)
-			{
-				ST7735_DrawBitmap(enemies[i].x*4 + 6,enemies[i].y*4 + 6,refresh,8,8);
-			}
-			
-			TIMER2_CTL_R = 0x00000001;//goes to gameflow()
-		}
-	}
-	
-	index = CollidesPowerDot(energizers);
-	
-	if (index != -1)
-	{
-		Sound_Chomp();
-		energizers[index].visible = FALSE;
-		score += 50;
-		dotsEaten++;
-		
-		for(int i = 0; i < 4; i++)
-		{
-			enemies[i].scared = TRUE;
-			enemies[i].alive = TRUE;
-			enemies[i].bmp = blueGhost;
-		}
-		
-		//start a timer for when the ghost go back to normal
-		TIMER1_CTL_R = 0x00000001;
-                
-		if (score >= 10000)
-			lives++;
-			
-		if (dotsEaten == 244)
-		{
-			//you win call isr
-			TIMER1_CTL_R = 0x00000000;
-			LevelInProgress = FALSE;
-			Input = FALSE;
-			Stop();
-			
-			ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
-			for(int i = 0; i < 4; i++)
-			{
-				ST7735_DrawBitmap(enemies[i].x*4 + 6,enemies[i].y*4 + 6,refresh,8,8);
-			}
-			
-			TIMER2_CTL_R = 0x00000001;//goes to gameflow()
-		}
-	}
-	
-	index = CollidesGhost(enemies);
-	
-	if ((index != -1) && (enemies[index].alive == TRUE) && (enemies[index].scared == FALSE))
-	{
-		LoseLife();
-	}
-	
-	else if (index != -1 && enemies[index].alive && enemies[index].scared)
-	{
-		score = score + 200;
-		enemies[index].alive = FALSE;
-		enemies[index].scared = FALSE;
-	}
+  //move pacman
+
+  Sound_Siren();
+
+
+  //checks for collisions twice that way he never moves straight through  a ghost
+  int index = CollidesGhost(enemies);
+
+  if ((index != -1) && (enemies[index].alive == TRUE) && (enemies[index].scared == FALSE))
+  {
+    LoseLife();
+  }
+
+  else if (index != -1 && enemies[index].alive && enemies[index].scared)
+  {
+    score = score + 200;
+    enemies[index].alive = FALSE;
+    enemies[index].scared = FALSE;
+  }
+
+  //if pacman is going out of bounds adjust his coordinates in the maze
+  //that way he scrolls to the other side of the screen
+  if(puck.x == 0 && puck.direction == LEFT)
+  {
+    puck.x = 28;
+  }
+
+  if (puck.x == 27 && puck.direction == RIGHT)
+  {
+    puck.x = -1;
+  }
+
+  //if the player is within the maze and he selects a new direction update pacmans direction
+  if (puck.x > -1 && puck.x < 28)
+  {
+    if (direction == LEFT && Maze_Get(puck.x - 1, puck.y) != '*' && Maze_Get(puck.x - 1, puck.y) != '-')
+    {
+      puck.direction = direction;
+      puck.bmp = yellow;
+    }
+    else if (direction == RIGHT && Maze_Get(puck.x + 1, puck.y) != '*' && Maze_Get(puck.x + 1, puck.y) != '-')
+    {
+      puck.direction = direction;
+      puck.bmp = yellowright;
+    }
+    else if (direction == UP && Maze_Get(puck.x, puck.y - 1) != '*' && Maze_Get(puck.x, puck.y - 1) != '-')
+    {
+      puck.direction = direction;
+      puck.bmp = yellowup;
+    }
+    else if (direction == DOWN && Maze_Get(puck.x, puck.y + 1) != '*' && Maze_Get(puck.x, puck.y + 1) != '-')
+    {
+      puck.direction = direction;
+      puck.bmp = yellowdown;
+    }
+  }
+
+  //check which direction pacman is moving in and update his position in the maze
+  if (puck.direction == LEFT && Maze_Get(puck.x - 1, puck.y) != '*' && Maze_Get(puck.x - 1, puck.y) != '-')
+  {
+    if(puck.x == 28)
+      ST7735_DrawBitmap(6,puck.y*4 + 6,refresh,8,8);
+    else
+      ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+
+    puck.x = puck.x - 1;
+  }
+  else if (puck.direction == RIGHT && Maze_Get(puck.x + 1, puck.y) != '*' && Maze_Get(puck.x + 1, puck.y) != '-')
+  {
+    if(puck.x == -1)
+      ST7735_DrawBitmap(114,puck.y*4 + 6,refresh,8,8);
+    else
+      ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+
+    puck.x = puck.x + 1;
+  }
+  else if (puck.direction == UP && Maze_Get(puck.x, puck.y - 1) != '*' && Maze_Get(puck.x, puck.y - 1) != '-')
+  {
+    ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+    puck.y = puck.y - 1;
+  }
+  else if (puck.direction == DOWN && Maze_Get(puck.x, puck.y + 1) != '*' && Maze_Get(puck.x, puck.y + 1) != '-')
+  {
+    ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+    puck.y = puck.y + 1;
+  }
+
+  //check for any collisions
+  index = CollidesDot(pellets);
+
+  if(index != -1)
+  {
+    Sound_Chomp();
+    pellets[index].visible = FALSE;
+    score += 10;
+    dotsEaten++;
+
+    if (score >= 10000)
+    {
+      lives++;
+    }
+
+    if (dotsEaten == 244)
+    {
+      //you win use isr
+      LevelInProgress = FALSE;
+      Input = FALSE;
+      Stop();
+
+      ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+      for(int i = 0; i < 4; i++)
+      {
+        ST7735_DrawBitmap(enemies[i].x*4 + 6,enemies[i].y*4 + 6,refresh,8,8);
+      }
+
+      TIMER2_CTL_R = 0x00000001;//goes to gameflow()
+    }
+  }
+
+  index = CollidesPowerDot(energizers);
+
+  if (index != -1)
+  {
+    Sound_Chomp();
+    energizers[index].visible = FALSE;
+    score += 50;
+    dotsEaten++;
+
+    for(int i = 0; i < 4; i++)
+    {
+      enemies[i].scared = TRUE;
+      enemies[i].alive = TRUE;
+      enemies[i].bmp = blueGhost;
+    }
+
+    //start a timer for when the ghost go back to normal
+    TIMER1_CTL_R = 0x00000001;
+
+    if (score >= 10000)
+      lives++;
+
+    if (dotsEaten == 244)
+    {
+      //you win call isr
+      TIMER1_CTL_R = 0x00000000;
+      LevelInProgress = FALSE;
+      Input = FALSE;
+      Stop();
+
+      ST7735_DrawBitmap(puck.x*4 + 6,puck.y*4 + 6,refresh,8,8);
+      for(int i = 0; i < 4; i++)
+      {
+        ST7735_DrawBitmap(enemies[i].x*4 + 6,enemies[i].y*4 + 6,refresh,8,8);
+      }
+
+      TIMER2_CTL_R = 0x00000001;//goes to gameflow()
+    }
+  }
+
+  index = CollidesGhost(enemies);
+
+  if ((index != -1) && (enemies[index].alive == TRUE) && (enemies[index].scared == FALSE))
+  {
+    LoseLife();
+  }
+
+  else if (index != -1 && enemies[index].alive && enemies[index].scared)
+  {
+    score = score + 200;
+    enemies[index].alive = FALSE;
+    enemies[index].scared = FALSE;
+  }
 }
 
 void unscare()
 {
-	for(int i= 0; i < 4; i++)
-	{
-		enemies[i].scared = FALSE;
-	}
-	//if i find the scarred ghost sound
-	//Stop();
-	//Sound_Siren();
+  for(int i= 0; i < 4; i++)
+  {
+    enemies[i].scared = FALSE;
+  }
+  //if i find the scarred ghost sound
+  //Stop();
+  //Sound_Siren();
 }
 
 void GameFlow()
 {
-	if(dotsEaten == 244)
-	{
-		LevelUp();
-		Stop();
-	}
-	else if(lives > 0)
-	{
-		midGameReset();
-		Stop();
-	}
-	else
-		Stop();
-	
-	Input = TRUE;
+  if(dotsEaten == 244)
+  {
+    LevelUp();
+    Stop();
+  }
+  else if(lives > 0)
+  {
+    midGameReset();
+    Stop();
+  }
+  else
+    Stop();
+
+  Input = TRUE;
 }
 
 void moveGhosts()
 {
-	//choose target
-	
-	if(enemies[0].alive == FALSE)
-	{
-		enemies[0].targetx = 13;
-		enemies[0].targety = 14;
-	}
-	else
-	{
-		if(enemies[0].scared == TRUE)
-		{
-			//random
-			enemies[0].targetx = Random() % 28;
-			enemies[0].targety = Random() % 36;
-		}
-		else
-		{
-			if(enemies[0].chase == TRUE)
-			{
-				//chase  pacman
-				enemies[0].targetx = puck.x;
-				enemies[0].targety = puck.y;
-			}
-			else if(enemies[0].scatter == TRUE)
-			{
-				enemies[0].targetx = 25;
-				enemies[0].targety = 0;
-			}
-		}
-	}
-	
-	if(enemies[1].alive == FALSE)
-	{
-		enemies[1].targetx = 13;
-		enemies[1].targety = 14;
-	}
-	else
-	{
-		if(enemies[1].scared == TRUE)
-		{
-			//random
-			enemies[1].targetx = Random() % 28;
-			enemies[1].targety = Random() % 36;
-		}
-		else
-		{
-			if(enemies[1].chase == TRUE)
-			{
-				//chase  pacman
-				enemies[1].targetx = Random() % 28;
-				enemies[1].targety = Random() % 36;
-			}
-			else if(enemies[1].scatter == TRUE)
-			{
-				enemies[1].targetx = 27;
-				enemies[1].targety = 34;
-			}
-		}
-	}
-	
-	if(enemies[2].alive == FALSE)
-	{
-		enemies[2].targetx = 13;
-		enemies[2].targety = 14;
-	}
-	else
-	{
-		if(enemies[2].scared == TRUE)
-		{
-			//random
-			enemies[2].targetx = Random() % 28;
-			enemies[2].targety = Random() % 36;
-		}
-		else
-		{
-			if(enemies[2].chase == TRUE)
-			{
-				//chase  pacman
-				if(puck.direction == UP)
-				{
-					enemies[2].targetx = puck.x;
-					enemies[2].targety = puck.y - 3;
-				}
-				else if(puck.direction == DOWN)
-				{
-					enemies[2].targetx = puck.x;
-					enemies[2].targety = puck.y + 3;
-				}
-				else if(puck.direction == LEFT)
-				{
-					enemies[2].targetx = puck.x - 3;
-					enemies[2].targety = puck.y;
-					
-					if(enemies[2].targetx < 0)
-						enemies[2].targetx = puck.x;
-				}
-				else if(puck.direction == RIGHT)
-				{
-					enemies[2].targetx = puck.x + 3;
-					enemies[2].targety = puck.y;
-					
-					if(enemies[2].targetx > 27)
-						enemies[2].targetx = puck.x;
-				}
-			}
-			else if(enemies[2].scatter == TRUE)
-			{
-				enemies[2].targetx = 2;
-				enemies[2].targety = 0;
-			}
-		}
-	}
-	
-	if(enemies[3].alive == FALSE)
-	{
-		enemies[3].targetx = 13;
-		enemies[3].targety = 14;
-	}
-	else
-	{
-		if(enemies[3].scared == TRUE)
-		{
-			//random
-			enemies[3].targetx = Random() % 28;
-			enemies[3].targety = Random() % 36;
-		}
-		else
-		{
-			if(enemies[3].chase == TRUE)
-			{
-				enemies[3].targetx = Random() % 28;
-				enemies[3].targety = Random() % 36;
-			}
-			else if(enemies[0].scatter == TRUE)
-			{
-				enemies[3].targetx = 0;
-				enemies[3].targety = 34;
-			}
-		}
-	}
-	
-	if(dotsEaten >= 0 && enemies[1].traped == TRUE)
-	{
-		ST7735_DrawBitmap(enemies[1].x*4 + 8, enemies[1].y*4 + 6,refresh,8,8);
-		enemies[1].x = 13;
-		enemies[1].y =14;
-		enemies[1].traped = FALSE;
-	}
-	else if(dotsEaten >= 20 && enemies[2].traped == TRUE)
-	{
-		ST7735_DrawBitmap(enemies[2].x*4 + 8, enemies[2].y*4 + 6,refresh,8,8);
-		ST7735_DrawBitmap(enemies[2].x*4 + 6, enemies[2].y*4 + 6,refresh,8,8);
-		
-		enemies[2].x = 15;
-		enemies[2].y = 14;
-		enemies[2].traped = FALSE;
-	}
-	else if(dotsEaten >= 30 && enemies[3].traped == TRUE)
-	{
-		ST7735_DrawBitmap(enemies[3].x*4 + 8, enemies[3].y*4 + 6,refresh,8,8);
-		ST7735_DrawBitmap(enemies[3].x*4 + 6, enemies[3].y*4 + 6,refresh,8,8);
-		
-		enemies[3].x = 17;
-		enemies[3].y = 14;
-		enemies[3].traped = FALSE;
-	}
-	
-	for(int i = 0; i < 4; i++)
-	{
-		if(enemies[i].scared == FALSE && enemies[i].traped == FALSE)
-		{
-			moveGhost(&enemies[i]);
-		}
-		else if(enemies[i].scared == TRUE && toggle == 0 && enemies[i].traped == FALSE)
-		{
-			moveGhost(&enemies[i]);
-		}
-		
-		if((enemies[i].x == 13) && (enemies[i].y == 14))
-		{
-			enemies[i].alive = TRUE;
-		}
-	}
-	
-	toggle = toggle ^ 0x01;
-	
-	//choose thier image
-	
-	//red
-	if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == UP)
-	{
-		enemies[0].bmp = redup;
-	}
-	else if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == DOWN)
-	{
-		enemies[0].bmp = reddown;
-	}
-	else if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == LEFT)
-	{
-		enemies[0].bmp = red;
-	}
-	else if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == RIGHT)
-	{
-		enemies[0].bmp = redright;
-	}
-	
-	//blue
-	if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == UP)
-	{
-		enemies[1].bmp = blueup;
-	}
-	else if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == DOWN)
-	{
-		enemies[1].bmp = bluedown;
-	}
-	else if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == LEFT)
-	{
-		enemies[1].bmp = blue;
-	}
-	else if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == RIGHT)
-	{
-		enemies[1].bmp = blueright;
-	}
-	
-	//pink
-	if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == UP)
-	{
-		enemies[2].bmp = pinkup;
-	}
-	else if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == DOWN)
-	{
-		enemies[2].bmp = pinkdown;
-	}
-	else if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == LEFT)
-	{
-		enemies[2].bmp = pink;
-	}
-	else if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == RIGHT)
-	{
-		enemies[2].bmp = pinkright;
-	}
-	
-	//orange
-	if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == UP)
-	{
-		enemies[3].bmp = orangeup;
-	}
-	else if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == DOWN)
-	{
-		enemies[3].bmp = orangedown;
-	}
-	else if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == LEFT)
-	{
-		enemies[3].bmp = orange;
-	}
-	else if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == RIGHT)
-	{
-		enemies[3].bmp = orangeright;
-	}
+  //choose target
+
+  if(enemies[0].alive == FALSE)
+  {
+    enemies[0].targetx = 13;
+    enemies[0].targety = 14;
+  }
+  else
+  {
+    if(enemies[0].scared == TRUE)
+    {
+      //random
+      enemies[0].targetx = Random() % 28;
+      enemies[0].targety = Random() % 36;
+    }
+    else
+    {
+      if(enemies[0].chase == TRUE)
+      {
+        //chase  pacman
+        enemies[0].targetx = puck.x;
+        enemies[0].targety = puck.y;
+      }
+      else if(enemies[0].scatter == TRUE)
+      {
+        enemies[0].targetx = 25;
+        enemies[0].targety = 0;
+      }
+    }
+  }
+
+  if(enemies[1].alive == FALSE)
+  {
+    enemies[1].targetx = 13;
+    enemies[1].targety = 14;
+  }
+  else
+  {
+    if(enemies[1].scared == TRUE)
+    {
+      //random
+      enemies[1].targetx = Random() % 28;
+      enemies[1].targety = Random() % 36;
+    }
+    else
+    {
+      if(enemies[1].chase == TRUE)
+      {
+        //chase  pacman
+        enemies[1].targetx = Random() % 28;
+        enemies[1].targety = Random() % 36;
+      }
+      else if(enemies[1].scatter == TRUE)
+      {
+        enemies[1].targetx = 27;
+        enemies[1].targety = 34;
+      }
+    }
+  }
+
+  if(enemies[2].alive == FALSE)
+  {
+    enemies[2].targetx = 13;
+    enemies[2].targety = 14;
+  }
+  else
+  {
+    if(enemies[2].scared == TRUE)
+    {
+      //random
+      enemies[2].targetx = Random() % 28;
+      enemies[2].targety = Random() % 36;
+    }
+    else
+    {
+      if(enemies[2].chase == TRUE)
+      {
+        //chase  pacman
+        if(puck.direction == UP)
+        {
+          enemies[2].targetx = puck.x;
+          enemies[2].targety = puck.y - 3;
+        }
+        else if(puck.direction == DOWN)
+        {
+          enemies[2].targetx = puck.x;
+          enemies[2].targety = puck.y + 3;
+        }
+        else if(puck.direction == LEFT)
+        {
+          enemies[2].targetx = puck.x - 3;
+          enemies[2].targety = puck.y;
+
+          if(enemies[2].targetx < 0)
+            enemies[2].targetx = puck.x;
+        }
+        else if(puck.direction == RIGHT)
+        {
+          enemies[2].targetx = puck.x + 3;
+          enemies[2].targety = puck.y;
+
+          if(enemies[2].targetx > 27)
+            enemies[2].targetx = puck.x;
+        }
+      }
+      else if(enemies[2].scatter == TRUE)
+      {
+        enemies[2].targetx = 2;
+        enemies[2].targety = 0;
+      }
+    }
+  }
+
+  if(enemies[3].alive == FALSE)
+  {
+    enemies[3].targetx = 13;
+    enemies[3].targety = 14;
+  }
+  else
+  {
+    if(enemies[3].scared == TRUE)
+    {
+      //random
+      enemies[3].targetx = Random() % 28;
+      enemies[3].targety = Random() % 36;
+    }
+    else
+    {
+      if(enemies[3].chase == TRUE)
+      {
+        enemies[3].targetx = Random() % 28;
+        enemies[3].targety = Random() % 36;
+      }
+      else if(enemies[0].scatter == TRUE)
+      {
+        enemies[3].targetx = 0;
+        enemies[3].targety = 34;
+      }
+    }
+  }
+
+  if(dotsEaten >= 0 && enemies[1].traped == TRUE)
+  {
+    ST7735_DrawBitmap(enemies[1].x*4 + 8, enemies[1].y*4 + 6,refresh,8,8);
+    enemies[1].x = 13;
+    enemies[1].y =14;
+    enemies[1].traped = FALSE;
+  }
+  else if(dotsEaten >= 20 && enemies[2].traped == TRUE)
+  {
+    ST7735_DrawBitmap(enemies[2].x*4 + 8, enemies[2].y*4 + 6,refresh,8,8);
+    ST7735_DrawBitmap(enemies[2].x*4 + 6, enemies[2].y*4 + 6,refresh,8,8);
+
+    enemies[2].x = 15;
+    enemies[2].y = 14;
+    enemies[2].traped = FALSE;
+  }
+  else if(dotsEaten >= 30 && enemies[3].traped == TRUE)
+  {
+    ST7735_DrawBitmap(enemies[3].x*4 + 8, enemies[3].y*4 + 6,refresh,8,8);
+    ST7735_DrawBitmap(enemies[3].x*4 + 6, enemies[3].y*4 + 6,refresh,8,8);
+
+    enemies[3].x = 17;
+    enemies[3].y = 14;
+    enemies[3].traped = FALSE;
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    if(enemies[i].scared == FALSE && enemies[i].traped == FALSE)
+    {
+      moveGhost(&enemies[i]);
+    }
+    else if(enemies[i].scared == TRUE && toggle == 0 && enemies[i].traped == FALSE)
+    {
+      moveGhost(&enemies[i]);
+    }
+
+    if((enemies[i].x == 13) && (enemies[i].y == 14))
+    {
+      enemies[i].alive = TRUE;
+    }
+  }
+
+  toggle = toggle ^ 0x01;
+
+  //choose thier image
+
+  //red
+  if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == UP)
+  {
+    enemies[0].bmp = redup;
+  }
+  else if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == DOWN)
+  {
+    enemies[0].bmp = reddown;
+  }
+  else if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == LEFT)
+  {
+    enemies[0].bmp = red;
+  }
+  else if(enemies[0].scared == FALSE && enemies[0].alive == TRUE && enemies[0].direction == RIGHT)
+  {
+    enemies[0].bmp = redright;
+  }
+
+  //blue
+  if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == UP)
+  {
+    enemies[1].bmp = blueup;
+  }
+  else if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == DOWN)
+  {
+    enemies[1].bmp = bluedown;
+  }
+  else if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == LEFT)
+  {
+    enemies[1].bmp = blue;
+  }
+  else if(enemies[1].scared == FALSE && enemies[1].alive == TRUE && enemies[1].direction == RIGHT)
+  {
+    enemies[1].bmp = blueright;
+  }
+
+  //pink
+  if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == UP)
+  {
+    enemies[2].bmp = pinkup;
+  }
+  else if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == DOWN)
+  {
+    enemies[2].bmp = pinkdown;
+  }
+  else if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == LEFT)
+  {
+    enemies[2].bmp = pink;
+  }
+  else if(enemies[2].scared == FALSE && enemies[2].alive == TRUE && enemies[2].direction == RIGHT)
+  {
+    enemies[2].bmp = pinkright;
+  }
+
+  //orange
+  if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == UP)
+  {
+    enemies[3].bmp = orangeup;
+  }
+  else if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == DOWN)
+  {
+    enemies[3].bmp = orangedown;
+  }
+  else if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == LEFT)
+  {
+    enemies[3].bmp = orange;
+  }
+  else if(enemies[3].scared == FALSE && enemies[3].alive == TRUE && enemies[3].direction == RIGHT)
+  {
+    enemies[3].bmp = orangeright;
+  }
 }
 
 void moveGhost(Ghost * g)
 {
-	int x, y, count;
-	x = g->targetx;
-	y = g->targety;
-	count = 0;
-	double u, d, l, r;
-	u = d = l = r = 0;
+  int x, y, count;
+  x = g->targetx;
+  y = g->targety;
+  count = 0;
+  double u, d, l, r;
+  u = d = l = r = 0;
 
-	if (g->x == 0 && g->direction == LEFT)
-	{
-		g->x = 28;
-	}
+  if (g->x == 0 && g->direction == LEFT)
+  {
+    g->x = 28;
+  }
 
-	if (g->x == 27 && g->direction == RIGHT)
-	{
-		g->x = -1;
-	}
-	
-	//set the direction of the ghost
-	if (g->x > -1 && g->x < 28)
-	{
-		if (g->nextDirection == LEFT && Maze_Get(g->x - 1, g->y) != '*' && Maze_Get(g->x - 1, g->y) != '-')
-		{
-			if(g->scared == FALSE && g->alive == FALSE)
-			{
-				g->bmp = eye;
-			}
-			
-			g->direction = LEFT;
-		}
-		else if (g->nextDirection == RIGHT && Maze_Get(g->x + 1, g->y) != '*' && Maze_Get(g->x + 1, g->y) != '-')
-		{
-			if(g->scared == FALSE && g->alive == FALSE)
-			{
-				g->bmp = eyeright;
-			}
-			
-			g->direction = RIGHT;
-		}
-		else if (g->nextDirection == UP && Maze_Get(g->x, g->y - 1) != '*' && Maze_Get(g->x, g->y - 1) != '-')
-		{
-			if(g->scared == FALSE && g->alive == FALSE)
-			{
-				g->bmp = eyeup;
-			}
-			
-			g->direction = UP;
-		}
-		else if (g->nextDirection == DOWN && Maze_Get(g->x, g->y + 1) != '*' && Maze_Get(g->x, g->y + 1) != '-')
-		{
-			if(g->scared == FALSE && g->alive == FALSE)
-			{
-				g->bmp = eyedown;
-			}
-			
-			g->direction = DOWN;
-		}
-	}
-	
-	//choose our next direction
-	
-	//look one square ahead and choose your next direction
-	if(g->y == 17 && (g->x < 2 || g->x > 25))
-	{
-	}
-	else
-	{
-		if (g->direction == LEFT)
-		{
-			if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 2, g->y) != '-')
-			{
-				count++;
-			}
-			
-			u = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
-			d = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
-			l = sqrt(pow(abs((g->x - 2) - x), 2) + pow(abs((g->y) - y), 2));
+  if (g->x == 27 && g->direction == RIGHT)
+  {
+    g->x = -1;
+  }
 
-			if (count < 2)
-			{
-				if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
-				{
-					g->nextDirection = DOWN;
-				}
-				if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
-				{
-					g->nextDirection = UP;
-				}
-				if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 2, g->y) != '-')
-				{
-					g->nextDirection = LEFT;
-				}
-			}
+  //set the direction of the ghost
+  if (g->x > -1 && g->x < 28)
+  {
+    if (g->nextDirection == LEFT && Maze_Get(g->x - 1, g->y) != '*' && Maze_Get(g->x - 1, g->y) != '-')
+    {
+      if(g->scared == FALSE && g->alive == FALSE)
+      {
+        g->bmp = eye;
+      }
 
-			else if (count == 2)
-			{
-				if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 2, g->y) != '-' && Maze_Get(g->x - 1, g->y - 1) != '-')
-				{
-					//left and up
-					if (l < u)
-						g->nextDirection = LEFT;
-					else
-						g->nextDirection = UP;
-				}
-				else if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 2, g->y) != '-' && Maze_Get(g->x - 1, g->y + 1) != '-')
-				{
-					//left and down
-					if (l < d)
-						g->nextDirection = LEFT;
-					else
-						g->nextDirection = DOWN;
-				}
-				else
-				{
-					//up and down
-					if (u < d)
-						g->nextDirection = UP;
-					else
-						g->nextDirection = DOWN;
-				}
-			}
+      g->direction = LEFT;
+    }
+    else if (g->nextDirection == RIGHT && Maze_Get(g->x + 1, g->y) != '*' && Maze_Get(g->x + 1, g->y) != '-')
+    {
+      if(g->scared == FALSE && g->alive == FALSE)
+      {
+        g->bmp = eyeright;
+      }
 
-			else
-			{
-				if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && d < l && d < u)
-				{
-					g->nextDirection = DOWN;
-				}
-				if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && u < l && u < d)
-				{
-					g->nextDirection = UP;
-				}
-				if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 2, g->y) != '-' && l < u && l < d)
-				{
-					g->nextDirection = LEFT;
-				}
-			}
-		}
+      g->direction = RIGHT;
+    }
+    else if (g->nextDirection == UP && Maze_Get(g->x, g->y - 1) != '*' && Maze_Get(g->x, g->y - 1) != '-')
+    {
+      if(g->scared == FALSE && g->alive == FALSE)
+      {
+        g->bmp = eyeup;
+      }
 
-		else if (g->direction == UP)
-		{
-			if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x, g->y - 2) != '-')
-			{
-				count++;
-			}
+      g->direction = UP;
+    }
+    else if (g->nextDirection == DOWN && Maze_Get(g->x, g->y + 1) != '*' && Maze_Get(g->x, g->y + 1) != '-')
+    {
+      if(g->scared == FALSE && g->alive == FALSE)
+      {
+        g->bmp = eyedown;
+      }
 
-			u = sqrt(pow(abs((g->x) - x), 2) + pow(abs((g->y - 2) - y), 2));
-			l = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
-			r = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
-			
-			if (count < 2)
-			{
-				if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
-				{
-					g->nextDirection = LEFT;
-				}
-				if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
-				{
-					g->nextDirection = RIGHT;
-				}
-				if (Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x, g->y - 2) != '-')
-				{
-					g->nextDirection = UP;
-				}
-			}
+      g->direction = DOWN;
+    }
+  }
 
-			else if (count == 2)
-			{
-				if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && Maze_Get(g->x + 1, g->y - 1) != '-')
-				{
-					//left and right
-					if (l < r)
-						g->nextDirection = LEFT;
-					else
-						g->nextDirection = RIGHT;
-				}
-				else if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && Maze_Get(g->x, g->y - 2) != '-')
-				{
-					//left and up
-					if (l < u)
-						g->nextDirection = LEFT;
-					else
-						g->nextDirection = UP;
-				}
-				else
-				{
-					//up and right
-					if (u < r)
-						g->nextDirection = UP;
-					else
-						g->nextDirection = RIGHT;
-				}
-			}
+  //choose our next direction
 
-			else
-				{
-					if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && l < u && l < r)
-					{
-						g->nextDirection = LEFT;
-					}
-					if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-' && r < l && r < u)
-					{
-						g->nextDirection = RIGHT;
-					}
-					if (Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x, g->y - 2) != '-' && u < l && u < r)
-					{
-						g->nextDirection = UP;
-					}
-				}
-		}
+  //look one square ahead and choose your next direction
+  if(g->y == 17 && (g->x < 2 || g->x > 25))
+  {
+  }
+  else
+  {
+    if (g->direction == LEFT)
+    {
+      if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 2, g->y) != '-')
+      {
+        count++;
+      }
 
-		else if (g->direction == RIGHT)
-		{
-			if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 2, g->y) != '-')
-			{
-				count++;
-			}
-                    
-			u = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
-			d = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
-			r = sqrt(pow(abs((g->x + 2) - x), 2) + pow(abs((g->y) - y), 2));
-     
-			if (count < 2)
-			{
-				if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
-				{
-					g->nextDirection = DOWN;
-				}
-				if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
-				{
-					g->nextDirection = UP;
-				}
-				if (Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 2, g->y) != '-')
-				{
-					g->nextDirection = RIGHT;
-				}
-			}
+      u = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
+      d = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
+      l = sqrt(pow(abs((g->x - 2) - x), 2) + pow(abs((g->y) - y), 2));
 
-			else if (count == 2)
-			{
-				if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && Maze_Get(g->x + 1, g->y - 1) != '-')
-				{
-					//down and up
-					if (d < u)
-						g->nextDirection = DOWN;
-					else
-						g->nextDirection = UP;
-				}
-				else if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && Maze_Get(g->x + 2, g->y) != '-')
-				{
-					//down and right
-					if (d < r)
-						g->nextDirection = DOWN;
-					else
-						g->nextDirection = RIGHT;
-				}
-				else
-					{
-						//up and right
-						if (u < r)
-							g->nextDirection = UP;
-						else
-							g->nextDirection = RIGHT;
-					}
-			}
+      if (count < 2)
+      {
+        if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
+        {
+          g->nextDirection = DOWN;
+        }
+        if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
+        {
+          g->nextDirection = UP;
+        }
+        if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 2, g->y) != '-')
+        {
+          g->nextDirection = LEFT;
+        }
+      }
 
-			else
-			{
-				if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && d < u && d < r)
-				{
-					g->nextDirection = DOWN;
-				}
-				if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-' && u < d && u < r)
-				{
-					g->nextDirection = UP;
-				}
-				if (Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 2, g->y) != '-' && r < u && r < d)
-				{
-					g->nextDirection = RIGHT;
-				}
-			}
-		}
+      else if (count == 2)
+      {
+        if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 2, g->y) != '-' && Maze_Get(g->x - 1, g->y - 1) != '-')
+        {
+          //left and up
+          if (l < u)
+            g->nextDirection = LEFT;
+          else
+            g->nextDirection = UP;
+        }
+        else if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 2, g->y) != '-' && Maze_Get(g->x - 1, g->y + 1) != '-')
+        {
+          //left and down
+          if (l < d)
+            g->nextDirection = LEFT;
+          else
+            g->nextDirection = DOWN;
+        }
+        else
+        {
+          //up and down
+          if (u < d)
+            g->nextDirection = UP;
+          else
+            g->nextDirection = DOWN;
+        }
+      }
 
-		else
-		{
-			if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
-			{
-				count++;
-			}
-			if (Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x, g->y + 2) != '-')
-			{
-				count++;
-			}
+      else
+      {
+        if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && d < l && d < u)
+        {
+          g->nextDirection = DOWN;
+        }
+        if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && u < l && u < d)
+        {
+          g->nextDirection = UP;
+        }
+        if (Maze_Get(g->x - 2, g->y) != '*' && Maze_Get(g->x - 2, g->y) != '-' && l < u && l < d)
+        {
+          g->nextDirection = LEFT;
+        }
+      }
+    }
 
-			l = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
-			d = sqrt(pow(abs((g->x) - x), 2) + pow(abs((g->y + 2) - y), 2));
-			r = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
+    else if (g->direction == UP)
+    {
+      if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x, g->y - 2) != '-')
+      {
+        count++;
+      }
 
-			if (count < 2)
-			{
-				if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
-				{
-					g->nextDirection = LEFT;
-				}
-				if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
-					{
-						g->nextDirection = RIGHT;
-					}
-					if (Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x, g->y + 2) != '-')
-					{
-						g->nextDirection = DOWN;
-					}
-			}
+      u = sqrt(pow(abs((g->x) - x), 2) + pow(abs((g->y - 2) - y), 2));
+      l = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
+      r = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
 
-			else if (count == 2)
-			{
-				if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && Maze_Get(g->x + 1, g->y + 1) != '-')
-				{
-					//left and right
-					if (l < r)
-						g->nextDirection = LEFT;
-					else
-						g->nextDirection = RIGHT;
-				}
-				else if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && Maze_Get(g->x, g->y + 2) != '-')
-				{
-					//left and down
-					if (l < d)
-						g->nextDirection = LEFT;
-					else
-						g->nextDirection = DOWN;
-				}
-				else
-				{
-					//right and down
-					if (r < d)
-						g->nextDirection = RIGHT;
-					else
-						g->nextDirection = DOWN;
-				}
-			}
+      if (count < 2)
+      {
+        if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-')
+        {
+          g->nextDirection = LEFT;
+        }
+        if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
+        {
+          g->nextDirection = RIGHT;
+        }
+        if (Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x, g->y - 2) != '-')
+        {
+          g->nextDirection = UP;
+        }
+      }
 
-			else
-			{
+      else if (count == 2)
+      {
+        if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && Maze_Get(g->x + 1, g->y - 1) != '-')
+        {
+          //left and right
+          if (l < r)
+            g->nextDirection = LEFT;
+          else
+            g->nextDirection = RIGHT;
+        }
+        else if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && Maze_Get(g->x, g->y - 2) != '-')
+        {
+          //left and up
+          if (l < u)
+            g->nextDirection = LEFT;
+          else
+            g->nextDirection = UP;
+        }
+        else
+        {
+          //up and right
+          if (u < r)
+            g->nextDirection = UP;
+          else
+            g->nextDirection = RIGHT;
+        }
+      }
 
-				if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && l < d && l < r)
-				{
-					g->nextDirection = LEFT;
-				}
-				if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && r < d && r < l)
-				{
-					g->nextDirection = RIGHT;
-				}
-				if (Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x, g->y + 2) != '-' && d < l && d < r)
-				{
-					g->nextDirection = DOWN;
-				}
-			}
-		}
-	}
-	
-	//move ghost
-	if (g->direction == LEFT && Maze_Get(g->x - 1, g->y) != '*' && Maze_Get(g->x - 1, g->y) != '-')
-	{
-		if(g->x == 28)
-			ST7735_DrawBitmap(6,g->y*4 + 6,refresh,8,8);
-		else
-			ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
-		
-		g->x = g->x - 1;
-	}
-	else if (g->direction == RIGHT && Maze_Get(g->x + 1, g->y) != '*' && Maze_Get(g->x + 1, g->y) != '-')
-	{
-		if(g->x == -1)
-			ST7735_DrawBitmap(114,g->y*4 + 6,refresh,8,8);
-		else
-			ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
-		
-		g->x = g->x + 1;
-	}
-	else if (g->direction == UP && Maze_Get(g->x, g->y - 1) != '*' && Maze_Get(g->x, g->y - 1) != '-')
-	{
-		ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
-		
-		g->y = g->y - 1;
-	}
-	else if (g->direction == DOWN && Maze_Get(g->x, g->y + 1) != '*' && Maze_Get(g->x, g->y + 1) != '-')
-	{
-		ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
-		
-		g->y = g->y + 1;
-	}
+      else
+        {
+          if (Maze_Get(g->x - 1, g->y - 1) != '*' && Maze_Get(g->x - 1, g->y - 1) != '-' && l < u && l < r)
+          {
+            g->nextDirection = LEFT;
+          }
+          if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-' && r < l && r < u)
+          {
+            g->nextDirection = RIGHT;
+          }
+          if (Maze_Get(g->x, g->y - 2) != '*' && Maze_Get(g->x, g->y - 2) != '-' && u < l && u < r)
+          {
+            g->nextDirection = UP;
+          }
+        }
+    }
+
+    else if (g->direction == RIGHT)
+    {
+      if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 2, g->y) != '-')
+      {
+        count++;
+      }
+
+      u = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y - 1) - y), 2));
+      d = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
+      r = sqrt(pow(abs((g->x + 2) - x), 2) + pow(abs((g->y) - y), 2));
+
+      if (count < 2)
+      {
+        if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
+        {
+          g->nextDirection = DOWN;
+        }
+        if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-')
+        {
+          g->nextDirection = UP;
+        }
+        if (Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 2, g->y) != '-')
+        {
+          g->nextDirection = RIGHT;
+        }
+      }
+
+      else if (count == 2)
+      {
+        if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && Maze_Get(g->x + 1, g->y - 1) != '-')
+        {
+          //down and up
+          if (d < u)
+            g->nextDirection = DOWN;
+          else
+            g->nextDirection = UP;
+        }
+        else if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && Maze_Get(g->x + 2, g->y) != '-')
+        {
+          //down and right
+          if (d < r)
+            g->nextDirection = DOWN;
+          else
+            g->nextDirection = RIGHT;
+        }
+        else
+          {
+            //up and right
+            if (u < r)
+              g->nextDirection = UP;
+            else
+              g->nextDirection = RIGHT;
+          }
+      }
+
+      else
+      {
+        if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && d < u && d < r)
+        {
+          g->nextDirection = DOWN;
+        }
+        if (Maze_Get(g->x + 1, g->y - 1) != '*' && Maze_Get(g->x + 1, g->y - 1) != '-' && u < d && u < r)
+        {
+          g->nextDirection = UP;
+        }
+        if (Maze_Get(g->x + 2, g->y) != '*' && Maze_Get(g->x + 2, g->y) != '-' && r < u && r < d)
+        {
+          g->nextDirection = RIGHT;
+        }
+      }
+    }
+
+    else
+    {
+      if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
+      {
+        count++;
+      }
+      if (Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x, g->y + 2) != '-')
+      {
+        count++;
+      }
+
+      l = sqrt(pow(abs((g->x - 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
+      d = sqrt(pow(abs((g->x) - x), 2) + pow(abs((g->y + 2) - y), 2));
+      r = sqrt(pow(abs((g->x + 1) - x), 2) + pow(abs((g->y + 1) - y), 2));
+
+      if (count < 2)
+      {
+        if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-')
+        {
+          g->nextDirection = LEFT;
+        }
+        if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-')
+          {
+            g->nextDirection = RIGHT;
+          }
+          if (Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x, g->y + 2) != '-')
+          {
+            g->nextDirection = DOWN;
+          }
+      }
+
+      else if (count == 2)
+      {
+        if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && Maze_Get(g->x + 1, g->y + 1) != '-')
+        {
+          //left and right
+          if (l < r)
+            g->nextDirection = LEFT;
+          else
+            g->nextDirection = RIGHT;
+        }
+        else if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && Maze_Get(g->x, g->y + 2) != '-')
+        {
+          //left and down
+          if (l < d)
+            g->nextDirection = LEFT;
+          else
+            g->nextDirection = DOWN;
+        }
+        else
+        {
+          //right and down
+          if (r < d)
+            g->nextDirection = RIGHT;
+          else
+            g->nextDirection = DOWN;
+        }
+      }
+
+      else
+      {
+
+        if (Maze_Get(g->x - 1, g->y + 1) != '*' && Maze_Get(g->x - 1, g->y + 1) != '-' && l < d && l < r)
+        {
+          g->nextDirection = LEFT;
+        }
+        if (Maze_Get(g->x + 1, g->y + 1) != '*' && Maze_Get(g->x + 1, g->y + 1) != '-' && r < d && r < l)
+        {
+          g->nextDirection = RIGHT;
+        }
+        if (Maze_Get(g->x, g->y + 2) != '*' && Maze_Get(g->x, g->y + 2) != '-' && d < l && d < r)
+        {
+          g->nextDirection = DOWN;
+        }
+      }
+    }
+  }
+
+  //move ghost
+  if (g->direction == LEFT && Maze_Get(g->x - 1, g->y) != '*' && Maze_Get(g->x - 1, g->y) != '-')
+  {
+    if(g->x == 28)
+      ST7735_DrawBitmap(6,g->y*4 + 6,refresh,8,8);
+    else
+      ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
+
+    g->x = g->x - 1;
+  }
+  else if (g->direction == RIGHT && Maze_Get(g->x + 1, g->y) != '*' && Maze_Get(g->x + 1, g->y) != '-')
+  {
+    if(g->x == -1)
+      ST7735_DrawBitmap(114,g->y*4 + 6,refresh,8,8);
+    else
+      ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
+
+    g->x = g->x + 1;
+  }
+  else if (g->direction == UP && Maze_Get(g->x, g->y - 1) != '*' && Maze_Get(g->x, g->y - 1) != '-')
+  {
+    ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
+
+    g->y = g->y - 1;
+  }
+  else if (g->direction == DOWN && Maze_Get(g->x, g->y + 1) != '*' && Maze_Get(g->x, g->y + 1) != '-')
+  {
+    ST7735_DrawBitmap(g->x*4 + 6,g->y*4 + 6,refresh,8,8);
+
+    g->y = g->y + 1;
+  }
 }
 
 void periodic60hz()
 {
-	//move sprites
-	if(LevelInProgress == TRUE)
-	{
-		moveGhosts();
-		movePuck();
-		if(LevelInProgress == TRUE)
-			reDraw();
-	}
+  //move sprites
+  if(LevelInProgress == TRUE)
+  {
+    moveGhosts();
+    movePuck();
+    if(LevelInProgress == TRUE)
+      reDraw();
+  }
 }
 
 /*--------------------------------------Collisions--------------------------------------------------------------------------*/
 
 int CollidesDot(Pac_Dot list[])
 {
-	for(int i = 0; i < 240; i++)
-	{
-		if((puck.x == list[i].x) && (puck.y == list[i].y) && (list[i].visible == TRUE))
-			return i;
-	}
-	
-	return -1;
+  for(int i = 0; i < 240; i++)
+  {
+    if((puck.x == list[i].x) && (puck.y == list[i].y) && (list[i].visible == TRUE))
+      return i;
+  }
+
+  return -1;
 }
 
 int CollidesGhost(Ghost list[])
 {
-	for(int i = 0; i < 4; i++)
-	{
-		if((puck.x == list[i].x) && (puck.y == list[i].y))
-			return i;
-	}
-	
-	return -1;
+  for(int i = 0; i < 4; i++)
+  {
+    if((puck.x == list[i].x) && (puck.y == list[i].y))
+      return i;
+  }
+
+  return -1;
 }
 
 int CollidesPowerDot(Power_Pellet list[])
 {
-	for(int i = 0; i < 4; i++)
-	{
-		if((puck.x == list[i].x) && (puck.y == list[i].y) && (list[i].visible == TRUE))
-			return i;
-	}
-	
-	return -1;
+  for(int i = 0; i < 4; i++)
+  {
+    if((puck.x == list[i].x) && (puck.y == list[i].y) && (list[i].visible == TRUE))
+      return i;
+  }
+
+  return -1;
 }
 
 /*---------------------------------------------ISR HANDLERS----------------------------------------------------------------*/
 
 void systickinit()
 {
-	NVIC_ST_CTRL_R = 0;                  // disable SysTick during setup
+  NVIC_ST_CTRL_R = 0;                  // disable SysTick during setup
   NVIC_ST_RELOAD_R = 1000000;  // 40Hz
   NVIC_ST_CURRENT_R = 0;
   NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x40000000; // priority 2
-	NVIC_ST_CTRL_R = NVIC_ST_CTRL_R | 0x00000007;//interupt enable
+  NVIC_ST_CTRL_R = NVIC_ST_CTRL_R | 0x00000007;//interupt enable
 }
 
 void SysTick_Handler()
 {
-	if(GameInProgress == TRUE)
-	{
-		//collect input
-		ADC_X = ADC_In_X();
-		ADC_Y = ADC_In_Y();
-		
-		//call a function that selects the direction and puts it in the direction  buffer
-		directionBuffer = JoystickDirection(ADC_X, ADC_Y);
-		
-		if((directionBuffer != CENTER) && (Input == TRUE))
-		{
-			//update the direction with the value in the buffer
-			direction = directionBuffer;
-		}
-		
-		if((LevelInProgress == FALSE) && (direction != CENTER) && (Input == TRUE))
-		{
-			ST7735_DrawBitmap(50,85,readyClear,28,8);
-			Sound_Siren();
-			LevelInProgress = TRUE;
-		}
-	}
+  if(GameInProgress == TRUE)
+  {
+    //collect input
+    ADC_X = ADC_In_X();
+    ADC_Y = ADC_In_Y();
+
+    //call a function that selects the direction and puts it in the direction  buffer
+    directionBuffer = JoystickDirection(ADC_X, ADC_Y);
+
+    if((directionBuffer != CENTER) && (Input == TRUE))
+    {
+      //update the direction with the value in the buffer
+      direction = directionBuffer;
+    }
+
+    if((LevelInProgress == FALSE) && (direction != CENTER) && (Input == TRUE))
+    {
+      ST7735_DrawBitmap(50,85,readyClear,28,8);
+      Sound_Siren();
+      LevelInProgress = TRUE;
+    }
+  }
 }
 
 
