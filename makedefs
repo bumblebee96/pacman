@@ -84,6 +84,7 @@ all: $(PROJ_NAME).bin
 
 clean:
 		rm -rf *.o *.d *.bin *.elf assembly_output/*.lst
+		rm -rf ../shared/*.o ../shared/*.d ../shared/*.bin ../shared/*.elf ../shared/assembly_output/*.lst
 
 flash: $(PROJ_NAME).bin
 		$(LM4FLASH) $<
