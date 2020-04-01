@@ -13,29 +13,23 @@
 
 #include "random.h"
 
+static uint32_t _seed;
+
 void Random_Init(uint32_t seed)
 {
-  __asm (
-        " LDR R2, =M\n"
-        " MOV R0, #1\n"
-        " STR R0, [R2]\n");
+  _seed = seed;
 }
 
 //------------Random32------------
 // Return R0= random number
 // Linear congruential generator 
 // from Numerical Recipes by Press et al.
-
 uint32_t Random32(void)
 {
-  __asm (
-        " LDR R2, =M\n"
-        " LDR R0, [R2]\n"
-        " LDR R1, =1664525\n"
-        " MUL R0, R0, R1\n"
-        " LDR R1, =1013904223\n"
-        " ADD R0, R1\n"
-        " STR R0, [R2]\n");
+  uint32_t output = _seed*1664525 + 1013904223;
+  _seed = output;
+
+  return output;
 }
        
 //------------Random------------
@@ -45,13 +39,9 @@ uint32_t Random32(void)
 
 uint32_t Random(void)
 {
-  __asm (
-        " LDR R2, =M\n"
-        " LDR R0, [R2]\n"
-        " LDR R1, =1664525\n"
-        " MUL R0, R0, R1\n"
-        " LDR R1, =1013904223\n"
-        " ADD R0, R1\n"
-        " STR R0, [R2]\n"
-        " LSR R0, R0, #24\n");
+  uint32_t output = _seed*1664525 + 1013904223;
+  uint32_t mask = 0x000000FF;
+  _seed = output;
+
+  return output & mask;
 }
