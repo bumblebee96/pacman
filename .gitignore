@@ -11,11 +11,11 @@ TestProject/*
 !TestProject/*.h
 !TestProject/*.ld
 
-lab*/*
-!lab*/Makefile
-!lab*/*.c
-!lab*/*.h
-!lab*/*.py
+src*/*
+!src*/Makefile
+!src*/*.c
+!src*/*.h
+!src*/*.py
 
 !shared*/*.c
 !shared*/*.h
